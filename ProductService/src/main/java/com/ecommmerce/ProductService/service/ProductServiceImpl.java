@@ -1,6 +1,7 @@
 package com.ecommmerce.ProductService.service;
 
 import com.ecommmerce.ProductService.entity.ProductEntity;
+import com.ecommmerce.ProductService.exception.ProductServiceCustomException;
 import com.ecommmerce.ProductService.model.ProductRequest;
 import com.ecommmerce.ProductService.model.ProductResponse;
 import com.ecommmerce.ProductService.repository.ProductRepository;
@@ -18,7 +19,7 @@ public class ProductServiceImpl implements ProductService{
     public long addProduct(ProductRequest productRequest) {
         log.info("Adding Product");
         ProductEntity product = ProductEntity.builder()
-                .productName(productRequest.getName())
+                .productName(productRequest.getProductName())
                 .quantity(productRequest.getQuantity())
                 .price(productRequest.getPrice()).build();
         productRepository.save(product);
@@ -29,7 +30,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ProductResponse getProductById(long productId) {
         ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not Found"));
+                .orElseThrow(() -> new ProductServiceCustomException("Product not Found","PRODUCT_NOT_FOUND"));
         ProductResponse productResponse = new ProductResponse();
         BeanUtils.copyProperties(product,productResponse);
         return productResponse;
